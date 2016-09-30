@@ -6,34 +6,49 @@ Assignment 3- Random Contraction Algorithm
 
 @author: bzk142
 """
+"""
+Download the following text file:
+
+kargerMinCut.txt
+The file contains the adjacency list representation of a simple undirected graph. There are 200 vertices labeled 1 to 200. 
+The first column in the file represents the vertex label, and the particular row (other entries except the first column) tells 
+all the vertices that the vertex is adjacent to. So for example, the 6th row looks like : "6	155	56	52	120	......". 
+This just means that the vertex with label 6 is adjacent to (i.e., shares an edge with) the vertices 
+with labels 155,56,52,120,......,etc
+
+Your task is to code up and run the randomized contraction algorithm for the min cut problem and use it on the above graph 
+to compute the min cut. (HINT: Note that you'll have to figure out an implementation of edge contractions. 
+Initially, you might want to do this naively, creating a new graph from the old every time there's an edge contraction. 
+But you should also think about more efficient implementations.) (WARNING: As per the video lectures, please make sure 
+to run the algorithm many times with different random seeds, and remember the smallest cut that you ever find.) 
+Write your numeric answer in the space provided. So e.g., if your answer is 5, just type 5 in the space provided.
+"""
+
 import numpy as np
 import random
 import time
 import pandas
 from collections import Counter
 
+
+
 def PopulateGraph(filestr):
     f = open(filestr, "r")
-#    num_lines = sum(1 for line in open('myfile.txt'))
+
     graph = {}
     for line in f:
         temp_line = line.rstrip('\n').split(' ')
-#        temp_line = line[0:len(line)];
-#        temp_line_lst = temp_line.split(' ')
-#        temp_lst = np.asarray(temp_line);
-#        temp_lst = [map(int, x) for x in temp_lst]
+
         for i in range(0,len(temp_line)):
             graph[temp_line[0]] = temp_line[1:len(temp_line)]
     return graph;
     
 def RandomContract(graph):
     
-#    key_list = graph.keys()
-#    ind_key = random.sample(range(0, len(key_list)),  1)
+
     random.seed(time.clock()*100)
     temp_key = random.choice(graph.keys())
     neighbors = np.asarray(graph[temp_key])
-#    neigh_ind = random.sample(range(0,len(neighbors)), 1)
     random.seed(time.clock()*101)
     temp_neigh = random.choice(neighbors)
     
@@ -48,8 +63,7 @@ def RandomContract(graph):
         temp_neigh_n_clnd = list(temp_neigh_n[tempin[0]])
     else:
         temp_neigh_n_clnd = []
-#    nehgbors_clnd = neighbors[np.where(neighbors != temp_neigh)]
-#    temp_neigh_n_clnd = temp_neigh_n[np.where(temp_neigh_n!=temp_key)]
+
     union = list(set(nehgbors_clnd)|set(temp_neigh_n_clnd));
     newKey = ','.join([temp_key, temp_neigh])
     if newKey in graph:
@@ -60,7 +74,7 @@ def RandomContract(graph):
     del graph[temp_neigh]
     graph = ReadjustEdges(graph, newKey, temp_key, temp_neigh);
     return graph
-#    ind_list = graph[key_list[ind_key]]
+
     
 def CountVertices(graph):
     return len(graph.keys())
@@ -69,7 +83,7 @@ def ReadjustEdges(graph, newKey, temp_key, temp_neigh):
     neighbors = graph[newKey];
     for i in neighbors:
         temp_neighs = graph[i];
-#        temp_neighs = array(str(temp_neighs), '|S3')
+
         tempi = np.where(np.asarray(temp_neighs) == temp_key)
         if len(tempi[0])!=0:
             for n in tempi[0]:            
@@ -80,7 +94,7 @@ def ReadjustEdges(graph, newKey, temp_key, temp_neigh):
             for m in tempi[0]:
                 temp_neighs[m] = newKey;
         graph[i] = temp_neighs;
-#        graph[i].append(np.asarray(newKey))
+
     return graph
         
 def FindCuts(graph, orig_g):
@@ -102,7 +116,7 @@ def FindCuts(graph, orig_g):
 """
 
 
-#random.seed(1000)
+
 cuts_l = [[] for _ in range(1000)];
 for t in range(0,1000):
     
@@ -110,7 +124,7 @@ for t in range(0,1000):
     copy_g = PopulateGraph('kargerMinCut.txt');
     while (CountVertices(copy_g)>2):
         copy_g = RandomContract(copy_g);
-#    print(copy_g)
+
     zika = FindCuts(copy_g, mygraph)
     print(zika)
     cuts_l[t].extend(zika)
